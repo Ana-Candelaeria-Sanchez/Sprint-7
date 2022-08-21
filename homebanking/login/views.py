@@ -1,9 +1,7 @@
-from importlib.resources import contents
-from multiprocessing import context
-from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
-from .forms import CreateUserForm
 from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, redirect
+
+from .forms import CreateUserForm
 
 
 # Create your views here.
@@ -42,8 +40,7 @@ def register_page(request):
         if request.method == "POST":
             form = CreateUserForm(request.POST)
             if form.is_valid():
-                form.save()
-                user = form.cleaned_data.get('username')
+                form.customer_save()
 
             return redirect('login')
 

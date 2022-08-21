@@ -1,3 +1,4 @@
+from clientes.models import Cliente
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import TextInput, EmailInput, CharField, PasswordInput, NumberInput, DecimalField
@@ -39,3 +40,10 @@ class CreateUserForm(UserCreationForm):
                                           'placeholder': 'Apellido',
                                           }),
         }
+
+    def customer_save(self, commit=True):
+        user = self.save(commit=commit)
+        if commit:
+            customer = Cliente(user=user, customer_dni=self.cleaned_data['dni'])
+            customer.save()
+        return user
