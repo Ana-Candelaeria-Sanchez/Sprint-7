@@ -9,6 +9,7 @@ class Cliente(models.Model):
                              null=False,
                              )
     user = models.OneToOneField(User, default=None, null=True, on_delete=models.CASCADE)
+    tipo = models.ForeignKey('clientes.TipoCliente', default=None, null=True, on_delete=models.CASCADE)
     customer_dni = models.PositiveIntegerField(db_column='customer_DNI')
     dob = models.PositiveIntegerField(blank=True, null=True)
     branch_id = models.IntegerField(null=True)
@@ -18,6 +19,16 @@ class Cliente(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class TipoCliente(models.Model):
+    nombre = models.CharField(max_length=15)
+
+    class Meta:
+        db_table = 'TIPO_CLIENTE'
+
+    def __str__(self):
+        return self.nombre
 
 
 class Empleado(models.Model):

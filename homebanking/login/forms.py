@@ -1,7 +1,9 @@
-from clientes.models import Cliente
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.forms import TextInput, EmailInput, CharField, PasswordInput, NumberInput, DecimalField
+
+from clientes.models import Cliente, TipoCliente
+from cuentas.models import Cuenta, TipoCuenta
 
 
 class CreateUserForm(UserCreationForm):
@@ -41,9 +43,34 @@ class CreateUserForm(UserCreationForm):
                                           }),
         }
 
+    @staticmethod
+    def create_cuenta(user):
+        cuenta = Cuenta(customer=user)
+
+        try:
+            tipo = TipoCuenta.objects.get(nombre='Cuenta Ahorro')
+            cuenta.tipo = tipo
+        except TipoCuenta.DoesNotExist:
+            tipo = TipoCuenta(nombre='Cuenta Ahorro')
+            tipo.save()
+
+        cuenta.save()
+        return cuenta
+
+    def create_customer(self, user):
+        customer = Cliente(user=user, customer_dni=self.cleaned_data['dni'])
+        try:
+            tipo = TipoCliente.objects.get(nombre='Classic')
+            customer.tipo = tipo
+        except TipoCliente.DoesNotExist:
+            tipo = TipoCliente(nombre='Classic')
+            tipo.save()
+        customer.save()
+        return customer
+
     def customer_save(self, commit=True):
         user = self.save(commit=commit)
         if commit:
-            customer = Cliente(user=user, customer_dni=self.cleaned_data['dni'])
-            customer.save()
+            self.create_customer(user)
+            self.create_cuenta(user)
         return user

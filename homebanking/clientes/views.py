@@ -6,4 +6,8 @@ from django.shortcuts import render
 
 @login_required()
 def homebanking(request):
-    return render(request, "clientes/home.html", {})
+    context = {}
+    user = request.user
+    ca = user.cuenta_set.filter(tipo__nombre="Cuenta Ahorro").get()
+    context['cuenta'] = ca
+    return render(request, "clientes/home.html", context)
